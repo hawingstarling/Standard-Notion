@@ -1,3 +1,4 @@
 import useScrollTop from "./useScrollTop";
+import { useMediaQuery } from "./useMediaQuery";
 
-export { useScrollTop }
+export { useScrollTop, useMediaQuery }
