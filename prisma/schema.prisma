@@ -15,7 +15,8 @@ model Document {
   title             String 
   userId            String
   isArchived        Boolean
-  parentDocument    Document? @relation(fields: [parentDocumentId], references: [id])
+  parentDocument    Document? @relation("ParentDocument", fields: [parentDocumentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  childDocument     Document? @relation("ParentDocument")
   parentDocumentId  String?   @unique @db.ObjectId
   content           String?
   coverImage        String?
