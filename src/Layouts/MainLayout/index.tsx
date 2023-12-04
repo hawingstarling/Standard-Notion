@@ -1,6 +1,6 @@
 import { useUser } from "@clerk/clerk-react"
 import Spinner from "../../Components/Spinner"
-import { redirect } from "next/navigation"
+import { useRouter } from "next/navigation"
 import Navigation from "../../Components/Navigation"
 
 
@@ -10,6 +10,7 @@ type Props = {
 
 const MainLayout: React.FC<Props> = ({ children }) => {
     const { isSignedIn, isLoaded } = useUser()
+    const router = useRouter()
 
     if (!isLoaded) {
         return (
@@ -19,7 +20,9 @@ const MainLayout: React.FC<Props> = ({ children }) => {
         )
     }
 
-    if (!isSignedIn) return redirect("/")
+    if (!isSignedIn) {
+        return router.push("/")
+    }
 
     return (
         <div className="h-full flex dark:bg-[#1F1F1F]">

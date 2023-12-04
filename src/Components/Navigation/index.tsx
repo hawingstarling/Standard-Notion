@@ -2,6 +2,7 @@ import { ChevronsLeft, MenuIcon } from "lucide-react";
 import React, { ElementRef } from "react";
 import { useMediaQuery } from "../../hook";
 import { usePathname } from "next/navigation";
+import UserItem from "../UserItem";
 
 
 function Navigation() {
@@ -97,7 +98,7 @@ function Navigation() {
                     <ChevronsLeft className="h-6 w-6" />
                 </div>
                 <div>
-                    <p>Action items</p>
+                    <UserItem />
                 </div>
                 <div className="mt-4">
                     <p>Documents</p>
