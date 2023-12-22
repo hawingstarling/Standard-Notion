@@ -10,14 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model Document {
-  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
   title             String 
   userId            String
   isArchived        Boolean
-  parentDocument    Document? @relation("ParentDocument", fields: [parentDocumentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  childDocument     Document? @relation("ParentDocument")
-  parentDocumentId  String?   @unique @db.ObjectId
+  parentDocument    Document?   @relation("Document_Children", fields: [parentDocumentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Children          Document[]  @relation("Document_Children")
+  parentDocumentId  String?     @db.ObjectId
   content           String?
   coverImage        String?
   icon              String?

@@ -1,19 +1,33 @@
-import { ChevronsLeft, MenuIcon } from "lucide-react";
+import { ChevronsLeft, MenuIcon, PlusCircle } from "lucide-react";
 import React, { ElementRef } from "react";
 import { useMediaQuery } from "../../hook";
 import { usePathname } from "next/navigation";
 import UserItem from "../UserItem";
+import { GetAllDocuments } from "../../services/api/document";
+import Item from "../Item";
 
 
 function Navigation() {
     const pathname = usePathname()
     const isMobile = useMediaQuery("(max-width: 768px)")
-
+    const [documents, setDocuments] = React.useState<DocumentResponseModel[]>([]);
     const isResizingRef = React.useRef(false)
     const sidebarRef = React.useRef<ElementRef<"aside">>(null)
     const navbarRef = React.useRef<ElementRef<"div">>(null)
     const [isResetting, setIsResetting] = React.useState(false);
     const [isCollapsed, setIsCollapsed] = React.useState(isMobile);
+
+    async function FetchAllDocument() {
+        let result = await GetAllDocuments()
+
+        console.log(result);
+        
+        setDocuments(result)
+    }
+
+    React.useEffect(() => {
+        FetchAllDocument()
+    }, [])
 
     React.useEffect(() => {
        if (isMobile) collapse()
@@ -99,9 +113,18 @@ function Navigation() {
                 </div>
                 <div>
                     <UserItem />
+                    <Item 
+                        onClick={() => {}} 
+                        label="New page" 
+                        icon={PlusCircle} 
+                    />
                 </div>
                 <div className="mt-4">
-                    <p>Documents</p>
+                    {documents?.map((document, index) => {
+                        return (
+                            <p key={index}>{document.title}</p>
+                        )
+                    })}
                 </div>
                 <div
                     onMouseDown={handleMouseDown}
