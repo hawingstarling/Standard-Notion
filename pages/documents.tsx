@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Button from "../src/Components/Button";
-import { auth, useUser } from "@clerk/nextjs" 
+import { useUser } from "@clerk/nextjs" 
 import { MainLayout } from "../src/Layouts";
 import { PlusCircle } from "lucide-react";
 import { CreateNewDocument, GetAllDocuments } from "../src/services/api/document";
@@ -15,7 +15,6 @@ interface UseUserT {
 
 function DocumentPage() {
     const { user } = useUser() as UseUserT
-
     async function FetchApiDocument() {
         try {
             if (!user.id) {
@@ -29,10 +28,13 @@ function DocumentPage() {
                 isPublished: false
             })
 
+            console.log(promise);
+            
+
             toast.promise(promise, {
                 loading: 'Creating a new note...',
                 success: 'New note created!',
-                error: 'Failed to create a new note.'
+                error: 'Failed to create a new note.',
             })
 
             let result = await promise
@@ -46,11 +48,6 @@ function DocumentPage() {
     const onCreate = () => {
         FetchApiDocument()
     }
-
-
-    React.useEffect(() => {
-        FetchApiDocument()
-    }, [])
 
     return ( 
         <MainLayout>

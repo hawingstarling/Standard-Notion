@@ -1,11 +1,19 @@
-import { ChevronsLeft, MenuIcon, PlusCircle } from "lucide-react";
+import { ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from "lucide-react";
 import React, { ElementRef } from "react";
 import { useMediaQuery } from "../../hook";
 import { usePathname } from "next/navigation";
 import UserItem from "../UserItem";
-import { GetAllDocuments } from "../../services/api/document";
+import { CreateNewDocument, GetAllDocuments } from "../../services/api/document";
 import Item from "../Item";
+import { useUser } from "@clerk/nextjs";
+import { toast } from "sonner";
+import DocumentList from "../DocumentList";
 
+interface UseUserT {
+    isLoaded: boolean,
+    isSignedIn: boolean,
+    user: { id: string, firstName: string }
+}
 
 function Navigation() {
     const pathname = usePathname()
@@ -16,12 +24,39 @@ function Navigation() {
     const navbarRef = React.useRef<ElementRef<"div">>(null)
     const [isResetting, setIsResetting] = React.useState(false);
     const [isCollapsed, setIsCollapsed] = React.useState(isMobile);
+    const { user } = useUser() as UseUserT
+    
+    async function FetchApiDocument() {
+        try {
+            if (!user.id) {
+                return new Error('Unauthenticated')
+            }
+
+            let promise = CreateNewDocument({
+                title: "Untitled", 
+                userId: user?.id,
+                isArchived: false,
+                isPublished: false
+            })
+
+            toast.promise(promise, {
+                loading: 'Creating a new note...',
+                success: 'New note created!',
+                error: 'Failed to create a new note.'
+            })
+
+            let result = await promise
+
+            FetchAllDocument()
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     async function FetchAllDocument() {
         let result = await GetAllDocuments()
 
-        console.log(result);
-        
         setDocuments(result)
     }
 
@@ -98,6 +133,10 @@ function Navigation() {
         }
     }
 
+    const onCreate = () => {
+        FetchApiDocument()
+    }
+
     return ( 
         <>
             <aside
@@ -114,17 +153,25 @@ function Navigation() {
                 <div>
                     <UserItem />
                     <Item 
-                        onClick={() => {}} 
+                        label="Search"
+                        icon={Search}
+                        isSearch
+                        onClick={() => {}}
+                    />
+                    <Item 
+                        label="Settings"
+                        icon={Settings}
+                        isSearch
+                        onClick={() => {}}
+                    />
+                    <Item 
+                        onClick={onCreate} 
                         label="New page" 
                         icon={PlusCircle} 
                     />
                 </div>
                 <div className="mt-4">
-                    {documents?.map((document, index) => {
-                        return (
-                            <p key={index}>{document.title}</p>
-                        )
-                    })}
+                    <DocumentList />
                 </div>
                 <div
                     onMouseDown={handleMouseDown}

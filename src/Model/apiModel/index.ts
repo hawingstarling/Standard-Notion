@@ -12,11 +12,11 @@ interface DocumentModel {
 }
 
 interface DocumentResponseModel {
-    id?: number
+    id?: string
     title: string
     userId: string
     isArchived: boolean
-    parentDocumentId?: DocumentModel[]
+    parentDocumentId?: DocumentResponseModel[]
     content?: string
     coverImage?: string
     icon?: string
