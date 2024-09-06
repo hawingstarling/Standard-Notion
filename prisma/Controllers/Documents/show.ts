@@ -11,6 +11,7 @@ export type ShowResponse = Document | ResponseError
 
 export const ShowDocument = async (req: NextApiRequestExtended, res: NextApiResponse<ShowResponse>) => {
     const { userId } = getAuth(req)
+    
     try {
         const queryParamParentDocument = req.query.parentDocument;
 
@@ -28,7 +29,7 @@ export const ShowDocument = async (req: NextApiRequestExtended, res: NextApiResp
             return res.status(404).json({ message: `ParentDocumentId ${queryParamParentDocument} can't be found` })
 
         }
-        return res.status(200).json(document)
+        return res.status(200).json(document as unknown as Document)
     } catch (error) {
         return res.status(400).json({ message: 'An error occurred while retrieving the document' })
     }

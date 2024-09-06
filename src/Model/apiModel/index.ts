@@ -2,13 +2,14 @@
 
 interface DocumentModel {
     title: string
-    userId: string
-    isArchived: boolean
-    parentDocument?: DocumentModel[]
+    userId?: string
+    isArchived?: boolean
+    // parentDocument?: DocumentModel[]
+    parentDocumentId?: string
     content?: string
     coverImage?: string
     icon?: string
-    isPublished: boolean
+    isPublished?: boolean
 }
 
 interface DocumentResponseModel {
@@ -16,7 +17,8 @@ interface DocumentResponseModel {
     title: string
     userId: string
     isArchived: boolean
-    parentDocumentId?: DocumentResponseModel[]
+    // parentDocumentId?: DocumentResponseModel[]
+    parentDocumentId?: string
     content?: string
     coverImage?: string
     icon?: string

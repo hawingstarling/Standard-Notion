@@ -5,7 +5,7 @@ import { ShowDocument, ShowResponse } from '../../../../prisma/Controllers/Docum
 type DocumentResponse = ShowResponse
 
 export interface NextApiRequestExtended extends NextApiRequest {
-    query: { parentDocument: string };
+    query: { parentDocument: string, id: string };
 }
 
 export default async function handler(req: NextApiRequestExtended, res: NextApiResponse<DocumentResponse>) {

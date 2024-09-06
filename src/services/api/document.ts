@@ -14,21 +14,25 @@ export const CreateNewDocument = async function (document: DocumentModel) {
     }
 }
 
-export const GetAllDocuments = async function () {
-    try {
-        let { data } = await axios.get<DocumentResponseModel>(`${BASE_DEV}/document`)
-        console.log(data);
+// export const GetAllDocuments = async function () {
+//     try {
+//         let { data } = await axios.get<DocumentResponseModel>(`${BASE_DEV}/document`)
+//         console.log('getAllDocument -> ', data);
         
-        return data
-    } catch (error) {
-        console.log(error);
-    }
-}
+//         return data
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
 
-export const GetDocument = async function (id: string = '') {
+export const GetSidebar = async function (id: string | null = null) {
     try {
-        let { data } = await axios.get<DocumentResponseModel>(`${BASE_DEV}/document/${id}`)
-        
+        let { data } = await axios.get<DocumentResponseModel[]>(`${BASE_DEV}/document`, {
+            params: {
+                parentDocumentId: id
+            }
+        })
+        console.log('getSidebar -> ', data)
         return data
     } catch (error) {
         console.log(error);

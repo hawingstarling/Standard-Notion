@@ -1,7 +1,7 @@
 import { ChevronsLeftRight } from "lucide-react";
-import { Avatar, AvatarImage } from "../Avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../Dropdown";
 import { SignOutButton, useUser } from "@clerk/nextjs"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Avatar, AvatarImage } from "../ui/avatar";
 
 function UserItem() {
     const { user } = useUser()

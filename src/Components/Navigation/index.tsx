@@ -3,7 +3,7 @@ import React, { ElementRef } from "react";
 import { useMediaQuery } from "../../hook";
 import { usePathname } from "next/navigation";
 import UserItem from "../UserItem";
-import { CreateNewDocument, GetAllDocuments } from "../../services/api/document";
+import { CreateNewDocument } from "../../services/api/document";
 import Item from "../Item";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
@@ -33,10 +33,7 @@ function Navigation() {
             }
 
             let promise = CreateNewDocument({
-                title: "Untitled", 
-                userId: user?.id,
-                isArchived: false,
-                isPublished: false
+                title: "Untitled"
             })
 
             toast.promise(promise, {
@@ -47,22 +44,22 @@ function Navigation() {
 
             let result = await promise
 
-            FetchAllDocument()
+            // FetchAllDocument()
 
         } catch (error) {
             console.log(error);
         }
     }
 
-    async function FetchAllDocument() {
-        let result = await GetAllDocuments()
+    // async function FetchAllDocument() {
+    //     let result = await GetAllDocuments()
 
-        setDocuments(result)
-    }
+    //     setDocuments(result)
+    // }
 
-    React.useEffect(() => {
-        FetchAllDocument()
-    }, [])
+    // React.useEffect(() => {
+    //     FetchAllDocument()
+    // }, [])
 
     React.useEffect(() => {
        if (isMobile) collapse()

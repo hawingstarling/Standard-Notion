@@ -1,11 +1,11 @@
 import React from "react";
 import Image from "next/image";
-import Button from "../src/Components/Button";
 import { useUser } from "@clerk/nextjs" 
 import { MainLayout } from "../src/Layouts";
 import { PlusCircle } from "lucide-react";
-import { CreateNewDocument, GetAllDocuments } from "../src/services/api/document";
+import { CreateNewDocument } from "../src/services/api/document";
 import { toast } from "sonner";
+import { Button } from "@/Components/ui/button";
 
 interface UseUserT {
     isLoaded: boolean,
@@ -23,9 +23,6 @@ function DocumentPage() {
 
             let promise = CreateNewDocument({
                 title: "Untitled", 
-                userId: user?.id,
-                isArchived: false,
-                isPublished: false
             })
 
             console.log(promise);

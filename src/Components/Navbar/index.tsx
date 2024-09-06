@@ -1,10 +1,10 @@
-import { SignInButton, useUser, UserButton } from "@clerk/clerk-react";
-import Button from "../Button";
+import { SignInButton, useUser, UserButton } from "@clerk/nextjs";
 import Logo from "../Logo";
 import { useScrollTop } from "../../hook";
 import { ModeToggle } from "../ModeToggle";
 import Spinner from "../Spinner";
 import Link from "next/link";
+import { Button } from "../ui/button";
 
 
 function Navbar() {

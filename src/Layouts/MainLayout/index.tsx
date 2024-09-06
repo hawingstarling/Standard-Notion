@@ -1,7 +1,10 @@
-import { useUser } from "@clerk/clerk-react"
+"use client";
+
+import { useUser } from "@clerk/nextjs"
 import Spinner from "../../Components/Spinner"
 import { useRouter } from "next/navigation"
 import Navigation from "../../Components/Navigation"
+import React from "react"
 
 
 type Props = {
@@ -12,6 +15,12 @@ const MainLayout: React.FC<Props> = ({ children }) => {
     const { isSignedIn, isLoaded } = useUser()
     const router = useRouter()
 
+    React.useEffect(() => {
+        if (isLoaded && !isSignedIn) {
+            router.push("/")
+        }
+    }, [isLoaded, isSignedIn, router])
+
     if (!isLoaded) {
         return (
             <div className="h-full flex items-center justify-center">
@@ -21,7 +30,7 @@ const MainLayout: React.FC<Props> = ({ children }) => {
     }
 
     if (!isSignedIn) {
-        return router.push("/")
+        return null
     }
 
     return (

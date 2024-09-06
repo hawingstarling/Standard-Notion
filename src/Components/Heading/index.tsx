@@ -1,8 +1,8 @@
 import { ArrowRight } from "lucide-react";
-import Button from "../Button";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import Spinner from "../Spinner";
 import Link from "next/link";
+import { Button } from "../ui/button";
 
 function Heading() {
     const { isSignedIn, isLoaded } = useUser()

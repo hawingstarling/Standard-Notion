@@ -2,7 +2,7 @@ import type { Document } from '@prisma/client'
 import { ObjectId } from 'mongodb';
 import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
-import { GetAllDocuments, GetDocument } from '../../services/api/document';
+import { GetSidebar } from '../../services/api/document';
 import Item from '../Item';
 import { FileIcon } from 'lucide-react';
 
@@ -19,7 +19,6 @@ function DocumentList({
     const params = useParams()
     const router = useRouter()
     const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
-    const [document, setDocument] = React.useState<DocumentResponseModel[]>([]);
     const [documents, setDocuments] = React.useState<DocumentResponseModel[]>([]);
 
     const onExpanded = (documentId: string) => {
@@ -29,26 +28,15 @@ function DocumentList({
         }))
     }
 
-    async function FetchApiDocument() {
-        let result = await GetDocument(parentDocumentId)
-        console.log('result > ', result);
-        
-        setDocument(result)
-    }
-
     async function FetchApiDocuments() {
-        let result = await GetAllDocuments()
-        
+        let result = await GetSidebar(parentDocumentId)
+        console.log('documents ', result);
         setDocuments(result)
     }
 
     const onRedirect = (documentId: string) => {
         router.push(`/documents/${documentId}`)
     }
-
-    React.useEffect(() => {
-        FetchApiDocument()
-    }, [])
 
     React.useEffect(() => {
         FetchApiDocuments()
@@ -78,8 +66,8 @@ function DocumentList({
             >
                 No pages inside
             </p>
-            {document &&
-                document.map((document) => (
+            {documents &&
+                documents.map((document) => (
                     <div key={document?.id}>
                         <Item 
                             id={document?.id} 
