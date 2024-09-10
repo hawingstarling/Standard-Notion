@@ -1,7 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-}
+const nextConfig = { images: { domains: ["files.edgestore.dev"] } };
 
-module.exports = nextConfig
+module.exports = nextConfig;

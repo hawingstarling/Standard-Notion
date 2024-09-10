@@ -1,53 +1,154 @@
 import { getAuth } from '@clerk/nextjs/server';
-import { NextApiRequest, NextApiResponse } from "next";
-import { ResponseError } from "../../../src/Utils/constants";
-import prisma from "../../prismaClient";
+import { NextApiRequest, NextApiResponse } from 'next';
+import prisma from '../../prismaClient';
+import {
+  ApiResponse,
+  BadRequestResponse,
+  InternalErrorResponse,
+  SuccessResponseWithMsg,
+  UnauthorizedResponse,
+} from '@/core/ApiResponse';
+import { NextRequest, NextResponse } from 'next/server';
 
-export type ListResponse = ReadonlyArray<Document> | ResponseError
+export const GetSidebar = async (_req: NextRequest, res: NextResponse) => {
+  const { userId } = getAuth(_req);
+  const { searchParams } = new URL(_req.url);
 
-export const GetSidebar = async (_req: NextApiRequest, res: NextApiResponse<ListResponse>) => {
-    try {
-        const { userId } = getAuth(_req);
+  const parentDocumentId = searchParams.get('parentDocumentId');
 
-        if (!userId) {
-            return res.status(401).json({
-                message: "Not authenticated"
-            })
-        }
-
-        const { parentDocumentId } = _req.query;
-
-        const documents = await prisma.document.findMany(
-            {
-            where: {
-                userId,
-                parentDocumentId: parentDocumentId as string,
-                isArchived: false
-            },
-        }
-    )
-        return res.status(200).json(documents as unknown as ReadonlyArray<Document>)
-    } catch (error) {
-        return res.status(400).json({ message: `An error occurred while retrieving the documents ${error}`})
+  try {
+    if (!userId) {
+      return new UnauthorizedResponse([
+        {
+          key: 'authentication',
+          value: 'Not Authentication',
+        },
+      ]).send();
     }
-}
 
-export const ListDocuments = async (_req: NextApiRequest, res: NextApiResponse<ListResponse>) => {
-    try {
-        const { userId } = getAuth(_req);
 
-        if (!userId) {
-            return res.status(401).json({
-                message: "Not authenticated"
-            })
-        }
+    const documents = await prisma.document.findMany({
+      where: {
+        userId,
+        parentDocumentId: parentDocumentId ? (parentDocumentId as string) : null,
+        isArchived: false,
+      },
+    });
 
-        const documents = await prisma.document.findMany({
-            where: { userId }
-        })
+    return new SuccessResponseWithMsg(
+      '200 OK',
+      documents as unknown as ReadonlyArray<Document>,
+    ).send();
+    // return NextResponse.json({
+    //   documents
+    // })
+  } catch (error) {
+    return new InternalErrorResponse([
+      {
+        key: 'internal',
+        value: 'An Error Occurred While Retrieving The Documents',
+      },
+    ]).send();
+  }
+};
 
-        return res.status(200).json(documents as unknown as ReadonlyArray<Document>)
-    } catch (error) {
-        return res.status(400).json({ message: 'An error occurred while retrieving the documents'})
+export const GetTrash = async (_req: NextRequest) => {
+  try {
+    const { userId } = getAuth(_req);
+
+    if (!userId) {
+      return new UnauthorizedResponse([
+        {
+          key: 'authentication',
+          value: 'Not Authentication',
+        },
+      ]).send();
     }
-}
+
+    const documents = await prisma.document.findMany({
+      where: {
+        userId,
+        isArchived: true,
+      },
+    });
+
+    return new SuccessResponseWithMsg(
+      '200 OK',
+      documents as unknown as ReadonlyArray<Document>,
+    ).send();
+  } catch (error) {
+    return new InternalErrorResponse([
+      {
+        key: 'internal',
+        value: 'An Error Occurred While Fetching Archived Documents',
+      },
+    ]).send();
+  }
+};
+
+export const GetSearch = async (_req: NextRequest) => {
+  try {
+    const { userId } = getAuth(_req);
+
+    if (!userId) {
+      return new UnauthorizedResponse([
+        {
+          key: 'authentication',
+          value: 'Not Authentication',
+        },
+      ]).send();
+    }
+
+    const documents = await prisma.document.findMany({
+      where: {
+        userId: userId,
+        isArchived: false,
+      },
+    });
+
+    return new SuccessResponseWithMsg(
+      '200 OK',
+      documents as unknown as ReadonlyArray<Document>,
+    ).send();
+  } catch (error) {
+    return new InternalErrorResponse([
+      {
+        key: 'internal',
+        value: 'An Error Occurred While Retrieving The Documents',
+      },
+    ]).send();
+  }
+};
+
+export const ListDocuments = async (_req: NextRequest) => {
+  try {
+    const { userId } = getAuth(_req);
+
+    if (!userId) {
+      return new UnauthorizedResponse([
+        {
+          key: 'authentication',
+          value: 'Not Authentication',
+        },
+      ]).send();
+    }
+
+    const documents = await prisma.document.findMany({
+      where: {
+        userId,
+      },
+    });
+
+    return new SuccessResponseWithMsg(
+      '200 OK',
+      documents as unknown as ReadonlyArray<Document>,
+    ).send();
+  } catch (error) {
+    return new BadRequestResponse([
+      {
+        key: 'get',
+        value: 'An Error Occurred While Retrieving The Documents',
+      },
+    ]).send();
+  }
+};

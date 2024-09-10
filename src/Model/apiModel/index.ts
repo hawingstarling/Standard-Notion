@@ -1,10 +1,13 @@
+export interface ResponseModel<T> {
+    status: number
+    message: string;
+    data: T
+}
 
-
-interface DocumentModel {
+export interface DocumentModel {
     title: string
     userId?: string
     isArchived?: boolean
-    // parentDocument?: DocumentModel[]
     parentDocumentId?: string
     content?: string
     coverImage?: string

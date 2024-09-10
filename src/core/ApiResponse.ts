@@ -1,9 +1,10 @@
-import { Response } from 'express';
+import { NextResponse } from 'next/server';
 
-// Helper code for the API consumer to understand the error and handle is accordingly
+// Helper code for the API consumer to understand the error and handle it accordingly
 
 export enum ResponseStatus {
   SUCCESS = 200,
+  CREATED = 201,
   BAD_REQUEST = 400,
   UNAUTHORIZED = 401,
   FORBIDDEN = 403,
@@ -23,19 +24,23 @@ export abstract class ApiResponse {
   ) {}
 
   protected prepare<T extends ApiResponse>(
-    res: Response,
     response: T,
-    headers: { [key: string]: string },
-  ): Response {
-    for (const [key, value] of Object.entries(headers)) res.append(key, value);
-    return res.status(this.status).json(ApiResponse.sanitize(response));
+    headers: { [key: string]: string } = {},
+  ): NextResponse {
+    const sanitizedResponse = ApiResponse.sanitize(response);
+    const res = NextResponse.json(sanitizedResponse, { status: this.status });
+
+    for (const [key, value] of Object.entries(headers)) {
+      res.headers.set(key, value);
+    }
+
+    return res;
   }
 
   public send(
-    res: Response,
-    headers: { [key: string]: string } = {},
-  ): Response {
-    return this.prepare<ApiResponse>(res, this, headers);
+    headers: { [key: string]: string } = {}
+  ): NextResponse {
+    return this.prepare<ApiResponse>(this, headers);
   }
 
   private static sanitize<T extends ApiResponse>(response: T): T {
@@ -63,8 +68,8 @@ export class NotFoundResponse extends ApiResponse {
     super(ResponseStatus.NOT_FOUND, errors);
   }
 
-  send(res: Response, headers: { [key: string]: string } = {}): Response {
-    return super.prepare<NotFoundResponse>(res, this, headers);
+  send(headers: { [key: string]: string } = {}): NextResponse {
+    return super.prepare<NotFoundResponse>(this, headers);
   }
 }
 
@@ -86,7 +91,7 @@ export class InternalErrorResponse extends ApiResponse {
   }
 }
 
-export class unknownErrorResponse extends ApiResponse {
+export class UnknownErrorResponse extends ApiResponse {
   constructor(errors?: ErrorApi[]) {
     super(ResponseStatus.INTERNAL_ERROR, errors);
   }
@@ -109,8 +114,8 @@ export class SuccessResponse<T> extends ApiResponse {
     super(ResponseStatus.SUCCESS);
   }
 
-  send(res: Response, headers: { [key: string]: string } = {}): Response {
-    return super.prepare<SuccessResponse<T>>(res, this, headers);
+  send(headers: { [key: string]: string } = {}): NextResponse {
+    return super.prepare<SuccessResponse<T>>(this, headers);
   }
 }
 
@@ -121,8 +126,34 @@ export class AccessTokenErrorResponse extends ApiResponse {
     super(ResponseStatus.UNAUTHORIZED, errors);
   }
 
-  send(res: Response, headers: { [key: string]: string } = {}): Response {
-    headers.instruction = this.instruction;
-    return super.prepare<AccessTokenErrorResponse>(res, this, headers);
+  send(headers: { [key: string]: string } = {}): NextResponse {
+    headers['instruction'] = this.instruction;
+    return super.prepare<AccessTokenErrorResponse>(this, headers);
+  }
+}
+
+export class SuccessResponseWithMsg<T> extends ApiResponse {
+  constructor(
+    private message: string,
+    private data: T
+  ) {
+    super(ResponseStatus.SUCCESS);
+  }
+
+  send(headers: { [key: string]: string } = {}): NextResponse {
+    return super.prepare<SuccessResponseWithMsg<T>>(this, headers);
+  }
+}
+
+export class CreatedResponse<T> extends ApiResponse {
+  constructor(
+    private message: string,
+    private data: T
+  ) {
+    super(ResponseStatus.CREATED);
+  }
+
+  send(headers: { [key: string]: string } = {}): NextResponse {
+    return super.prepare<CreatedResponse<T>>(this, headers);
   }
 }
