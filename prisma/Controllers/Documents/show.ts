@@ -1,6 +1,6 @@
 import { Document } from '@prisma/client';
-import { NextApiResponse, NextApiRequest } from 'next';
 import { getAuth } from '@clerk/nextjs/server';
+import prisma from '../../prismaClient';
 import {
   ApiResponse,
   BadRequestResponse,

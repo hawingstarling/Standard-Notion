@@ -1,7 +1,7 @@
 import { getAuth } from '@clerk/nextjs/server';
 import { z } from 'zod';
 import prisma from '../../prismaClient';
-import { Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import {
   ApiResponse,
   BadRequestResponse,
