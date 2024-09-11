@@ -8,9 +8,9 @@ import {
   SuccessResponseWithMsg,
   UnauthorizedResponse,
 } from '@/core/ApiResponse';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
-export const GetSidebar = async (_req: NextRequest, res: NextResponse) => {
+export const GetSidebar = async (_req: NextRequest) => {
   const { userId } = getAuth(_req);
   const { searchParams } = new URL(_req.url);
 
@@ -33,15 +33,16 @@ export const GetSidebar = async (_req: NextRequest, res: NextResponse) => {
         parentDocumentId: parentDocumentId ? (parentDocumentId as string) : null,
         isArchived: false,
       },
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
 
     return new SuccessResponseWithMsg(
       '200 OK',
-      documents as unknown as ReadonlyArray<Document>,
+      documents,
     ).send();
-    // return NextResponse.json({
-    //   documents
-    // })
+
   } catch (error) {
     return new InternalErrorResponse([
       {
@@ -70,6 +71,9 @@ export const GetTrash = async (_req: NextRequest) => {
         userId,
         isArchived: true,
       },
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
 
     return new SuccessResponseWithMsg(
@@ -104,6 +108,9 @@ export const GetSearch = async (_req: NextRequest) => {
         userId: userId,
         isArchived: false,
       },
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
 
     return new SuccessResponseWithMsg(

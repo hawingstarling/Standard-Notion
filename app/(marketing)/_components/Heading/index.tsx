@@ -3,8 +3,8 @@
 import { ArrowRight } from "lucide-react";
 import { SignInButton, useUser } from "@clerk/clerk-react";
 import Link from "next/link";
-import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/Spinner";
 
 function Heading() {
     const { isSignedIn, isLoaded } = useUser()

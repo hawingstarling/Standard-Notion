@@ -4,8 +4,11 @@ import { ShowDocument } from "prisma/Controllers/Documents/show";
 
 export async function GET(
     req: NextRequest, 
+    { params }: { params: { documentId: string } }
 ) {
-    return ShowDocument(req)
+    const documentId = params.documentId;
+    
+    return ShowDocument(req, documentId)
 }
 
 export async function DELETE(

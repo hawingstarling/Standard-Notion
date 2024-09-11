@@ -5,19 +5,23 @@ import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 import { toast } from 'sonner';
 import { Search, Trash, Undo } from 'lucide-react';
-import { Document } from '@prisma/client';
-import Spinner from '@/components/Spinner';
 import { Input } from '@/components/ui/input';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Spinner } from '@/components/Spinner';
 
 export const TrashBox = () => {
   const router = useRouter();
   const params = useParams();
   const queryClient = useQueryClient()
   const [search, setSearch] = React.useState('');
-  const [trashs, setTrashs] = React.useState<Document[]>([]);
-  const filteredDocuments = trashs.filter((trashs) => {
+
+  const { data: trashs } = useQuery({
+    queryKey: ['trashs'],
+    queryFn: () => GetTrash()
+  });
+
+  const filteredDocuments = trashs?.filter((trashs) => {
     return trashs.title.toLowerCase().includes(search.toLowerCase());
   });
   const { mutateAsync: remove } = useMutation({
@@ -25,6 +29,9 @@ export const TrashBox = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['documents']
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ['trashs']
       })
     }
   });
@@ -33,6 +40,9 @@ export const TrashBox = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['documents']
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ['trashs']
       })
     }
   });
@@ -52,7 +62,6 @@ export const TrashBox = () => {
         error: 'Failed to restore note.',
       }
     )
-    setTrashs((prev) => prev.filter((doc) => doc.id !== documentId))
   };
 
   const onRemove = async (documentId: string) => {
@@ -64,22 +73,11 @@ export const TrashBox = () => {
         error: 'Failed to delete note.',
       }
     )
-    setTrashs((prev) => prev.filter((doc) => doc.id !== documentId))
 
     if (params.documentId === documentId) {
       router.push('/documents');
     }
   };
-
-  async function FetchApiDocuments() {
-    let { data } = await GetTrash();
-
-    setTrashs((data as any).data as Document[]);
-  }
-
-  React.useEffect(() => {
-    FetchApiDocuments();
-  }, []);
 
   if (trashs === undefined) {
     return (

@@ -15,6 +15,15 @@ export interface DocumentModel {
     isPublished?: boolean
 }
 
+export interface DocumentUpdateInput {
+    id: string
+    title?: string
+    content?: string
+    coverImage?: string
+    icon?: string
+    isPublished?: boolean
+}
+
 interface DocumentResponseModel {
     id?: string
     title: string

@@ -2,21 +2,24 @@
 
 import { ChevronsLeft, MenuIcon, Plus, PlusCircle, Search, Settings, Trash } from 'lucide-react';
 import { useSearch } from '@/hook/useSearch';
+import { useSettings } from '@/hook/useSettings';
 import React, { ElementRef } from 'react';
 import { useMediaQuery } from '../../../../src/hook';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { CreateNewDocument } from '../../../../src/services/api/document';
 import Item from '../Item';
-import { useUser } from '@clerk/nextjs';
 import { toast } from 'sonner';
 import DocumentList from '../DocumentList';
 import UserItem from '../UserItem';
 import { TrashBox } from '../TrashBox/TrashBox';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Navbar } from '../Navbar/Navbar';
 
 function Navigation() {
   const search = useSearch();
+  const settings = useSettings();
+  const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient()
@@ -32,7 +35,7 @@ function Navigation() {
       queryClient.invalidateQueries({
         queryKey: ['documents']
       })
-      // router.push(`/documents/${data.id}`)
+      router.push(`/documents/${data.id}`)
     }
   });
 
@@ -125,7 +128,7 @@ function Navigation() {
         <div>
           <UserItem />
           <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
-          <Item label="Settings" icon={Settings} isSearch onClick={() => {}} />
+          <Item label="Settings" icon={Settings} onClick={settings.onOpen} />
           <Item onClick={onCreate} label="New page" icon={PlusCircle} />
         </div>
         <div className="mt-4">
@@ -150,11 +153,18 @@ function Navigation() {
         ref={navbarRef}
         className={`w-[calc(100% - 240px)] absolute left-60 top-0 z-[99999] ${isResetting && 'transition-all duration-300 ease-in-out'} ${isMobile && 'left-0 w-full'}`}
       >
-        <nav className="w-full bg-transparent px-3 py-2">
-          {isCollapsed && (
-            <MenuIcon onClick={resetWidth} className="h-6 w-6 text-muted-foreground" />
-          )}
-        </nav>
+        {!!params.documentId ? (
+          <Navbar 
+            isCollapsed={isCollapsed}
+            onResetWidth={resetWidth}
+          />
+        ) : (
+          <nav className="w-full bg-transparent px-3 py-2">
+            {isCollapsed && (
+              <MenuIcon onClick={resetWidth} className="h-6 w-6 text-muted-foreground" />
+            )}
+          </nav>
+        )}
       </div>
     </>
   );

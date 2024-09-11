@@ -6,7 +6,7 @@ import { useScrollTop } from "../../../../src/hook";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ModeToggle";
-import Spinner from "@/components/Spinner";
+import { Spinner } from "@/components/Spinner";
 
 function Navbar() {
     const { isSignedIn, isLoaded } = useUser()

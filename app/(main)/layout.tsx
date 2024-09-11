@@ -1,11 +1,11 @@
 "use client";
 
 import Navigation from "app/(main)/_components/Navigation";
-import Spinner from "@/components/Spinner";
 import { useUser } from "@clerk/clerk-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { SearchCommand } from "@/components/SearchCommand/SearchCommand";
+import { Spinner } from "@/components/Spinner";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { isSignedIn, isLoaded } = useUser();

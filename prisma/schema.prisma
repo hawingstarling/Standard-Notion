@@ -23,7 +23,17 @@ model Document {
   coverImage        String?
   icon              String?
   isPublished       Boolean
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([userId], name: "by_user")
   @@index([userId, parentDocumentId], name: "by_user_parent")
+}
+
+model BannerAds {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  imageUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

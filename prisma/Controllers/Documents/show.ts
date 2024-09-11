@@ -4,6 +4,8 @@ import { getAuth } from '@clerk/nextjs/server';
 import {
   ApiResponse,
   BadRequestResponse,
+  ForbiddenResponse,
+  InternalErrorResponse,
   SuccessResponseWithMsg,
   UnauthorizedResponse,
 } from '@/core/ApiResponse';
@@ -12,11 +14,10 @@ import { NextRequest } from 'next/server';
 
 export const ShowDocument = async (
   req: NextRequest,
+  documentId: string
 ) => {
   const { userId } = getAuth(req);
-  const { searchParams } = new URL(req.url);
 
-  const parentDocumentId = searchParams.get('parentDocumentId');
   try {
     if (!userId) {
       return new UnauthorizedResponse([
@@ -27,32 +28,46 @@ export const ShowDocument = async (
       ]);
     }
 
-    const document = await prisma?.document.findMany({
+    if (!documentId) {
+      return new BadRequestResponse([
+        {
+          key: 'id',
+          value: 'Document ID is required',
+        },
+      ]).send();
+    }
+
+    const document = await prisma?.document.findUnique({
       where: {
         userId: userId as string,
-        parentDocumentId,
-        AND: {
-          isArchived: false,
-        },
+        id: documentId,
       },
     });
 
-    if (document === null) {
-      return new BadRequestResponse([
-        {
-          key: 'parentDocument',
-          value: `ParentDocumentId ${parentDocumentId} not found`,
-        },
-      ]);
+    if (document?.isPublished && !document.isArchived) {
+      return new SuccessResponseWithMsg(
+        '200 OK',
+        document as unknown as ReadonlyArray<Document>,
+      ).send();
     }
+
+    if (document?.userId !== userId) {
+      return new ForbiddenResponse([
+        {
+          key: 'forbidden',
+          value: 'Unauthorized',
+        },
+      ]).send();
+    }
+
     return new SuccessResponseWithMsg(
       '200 OK',
       document as unknown as ReadonlyArray<Document>,
     ).send();
   } catch (error) {
-    return new BadRequestResponse([
+    return new InternalErrorResponse([
       {
-        key: 'get',
+        key: 'internal',
         value: 'An Error Occurred While Retrieving The Document',
       },
     ]);

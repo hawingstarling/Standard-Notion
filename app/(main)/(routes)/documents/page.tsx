@@ -7,6 +7,8 @@ import { PlusCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { CreateNewDocument } from '@/services/api/document';
 import { Button } from '@/components/ui/button';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 interface UseUserT {
   isLoaded: boolean;
@@ -16,7 +18,18 @@ interface UseUserT {
 
 function DocumentPage() {
   const { user } = useUser() as UseUserT;
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
+  const { mutateAsync: create } = useMutation({
+    mutationFn: CreateNewDocument,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['documents']
+      })
+      router.push(`/documents/${data.id}`)
+    }
+  })
   async function FetchApiDocument() {
     try {
       let promise = CreateNewDocument({
@@ -37,8 +50,15 @@ function DocumentPage() {
     }
   }
 
-  const onCreate = () => {
-    FetchApiDocument();
+  const onCreate = async () => {
+    await toast.promise(
+      create({ title: 'Untitled' }),
+      {
+        loading: 'Creating a new note...',
+        success: 'New note created!',
+        error: 'Failed to create a new note.',
+      }
+    )
   };
 
   return (

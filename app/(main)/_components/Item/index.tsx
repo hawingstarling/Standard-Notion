@@ -42,15 +42,17 @@ function Item({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['documents']
-      })
+      }),
+      router.push(`/documents`)
     }
   });
   const { mutateAsync: create } = useMutation({
     mutationFn: CreateNewDocument,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ['documents']
       })
+      router.push(`/documents/${data.id}`)
     }
   });
 
@@ -72,22 +74,12 @@ function Item({
         error: 'Failed to archive note.',
       }
     )
-    //     router.push('/documents')
   };
 
   const onCreate = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
 
     if (!id) return;
-    // const promise = CreateNewDocument({
-    //   title: 'Untitled',
-    //   parentDocumentId: id,
-    // }).then((res) => {
-    //   if (!expanded) {
-    //     onExpand?.();
-    //   }
-    //   router.push(`/documents/${(res as any).data.data.id}`);
-    // });
 
     await toast.promise(
       create({
@@ -104,7 +96,6 @@ function Item({
     if (!expanded) {
       onExpand?.();
     }
-    //   router.push(`/documents/${(res as any).data.data.id}`);
   };
 
   const ChevronIcon = expanded ? ChevronDown : ChevronRight;
@@ -121,7 +112,7 @@ function Item({
       {!!id && (
         <div
           role="button"
-          className="h-full rounded-sm hover:bg-neutral-300 dark:bg-neutral-600"
+          className="h-full rounded-sm hover:bg-neutral-300 dark-hover:bg-neutral-600"
           onClick={handleExpand}
         >
           <ChevronIcon className="h-4 w-4 shrink-0 text-muted-foreground/50" />
@@ -130,7 +121,7 @@ function Item({
       {documentIcon ? (
         <div className="mr-2 shrink-0 text-[18px]">{documentIcon}</div>
       ) : (
-        <Icon className="mr-2 h-[18px] shrink-0 text-muted-foreground" />
+        <Icon className="mr-2 h-[18px] shrink-0 text-muted-foreground w-[18px]" />
       )}
       <span className="truncate">{label}</span>
       {isSearch && (

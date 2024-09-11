@@ -1,5 +1,5 @@
 import { getAuth } from '@clerk/nextjs/server';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { z } from 'zod';
 import prisma from '../../prismaClient';
 import { Prisma } from '@prisma/client';
 import {
@@ -7,6 +7,7 @@ import {
   BadRequestResponse,
   ForbiddenResponse,
   InternalErrorResponse,
+  NotFoundResponse,
   SuccessMsgResponse,
   SuccessResponse,
   SuccessResponseWithMsg,
@@ -98,9 +99,9 @@ export const Archive = async (
 
     return new SuccessResponseWithMsg('200 Updated', document).send();
   } catch (error) {
-    return new BadRequestResponse([
+    return new InternalErrorResponse([
       {
-        key: 'archive',
+        key: 'internal',
         value: 'An Error Occurred While Archiving The Document',
       },
     ]).send();
@@ -201,11 +202,241 @@ export const Restore = async (
 
     return new SuccessResponseWithMsg('200 Updated', document).send();
   } catch (error) {
-    return new BadRequestResponse([
+    return new InternalErrorResponse([
       {
-        key: 'restore',
+        key: 'internal',
         value: 'An Error Occurred While Restoring Archived Documents',
       },
     ]).send();
   }
 };
+
+
+const updateDocumentSchema = z.object({
+  id: z.string(),
+  title: z.string().optional(),
+  content: z.string().optional(),
+  coverImage: z.string().optional(),
+  icon: z.string().optional(),
+  isPublished: z.boolean().optional(),
+});
+
+export const UpdateDocument = async (
+  req: NextRequest,
+) => {
+  const { userId } = getAuth(req);
+  const body = await req.json()
+  const validate = updateDocumentSchema.parse(body);
+
+  const {
+    id,
+    ...rest
+  } = validate
+
+  try {
+    if (!userId) {
+      return new UnauthorizedResponse([
+        {
+          key: 'authentication',
+          value: 'Not Authentication',
+        },
+      ]).send();
+    }
+
+    const existingDocument = await prisma.document.findUnique({
+      where: {
+        id
+      }
+    })    
+
+    if (!existingDocument) {
+      return new NotFoundResponse([
+        {
+          key: 'document',
+          value: 'Document Not Found'
+        }
+      ]).send()
+    }
+
+    if (existingDocument.userId !== userId) {
+      return new ForbiddenResponse([
+        {
+          key: 'forbidden',
+          value: 'Unauthorized',
+        },
+      ]).send();
+    }
+
+    const updateDocument = await prisma.document.update({
+      where: {
+        id
+      },
+      data: {
+        ...rest
+      }
+    })
+
+    return new SuccessResponseWithMsg(
+      '200 Updated',
+      updateDocument
+    ).send()
+
+  } catch (error) {
+    return new InternalErrorResponse([
+      {
+        key: 'internal',
+        value: 'An Error Occurred While Fetching Updated Documents',
+      },
+    ]).send();
+  }
+}
+
+export const RemoveIcon = async (
+  req: NextRequest,
+) => {
+  const { userId } = getAuth(req);
+  const { searchParams } = new URL(req.url);
+
+  const id = searchParams.get('id');
+
+  try {
+    if (!userId) {
+      return new UnauthorizedResponse([
+        {
+          key: 'authentication',
+          value: 'Not Authentication',
+        },
+      ]).send();
+    }
+
+    if (!id) {
+      return new BadRequestResponse([
+        {
+          key: 'id',
+          value: 'DocumentId Is Required',
+        },
+      ]).send();
+    }
+
+    const existingDocument = await prisma.document.findUnique({
+      where: {
+        id
+      }
+    })    
+
+    if (!existingDocument) {
+      return new NotFoundResponse([
+        {
+          key: 'document',
+          value: 'Document Not Found'
+        }
+      ]).send()
+    }
+
+    if (existingDocument.userId !== userId) {
+      return new ForbiddenResponse([
+        {
+          key: 'forbidden',
+          value: 'Unauthorized',
+        },
+      ]).send();
+    }
+
+    const updateDocument = await prisma.document.update({
+      where: {
+        id
+      },
+      data: {
+        icon: null
+      }
+    })
+
+    return new SuccessResponseWithMsg(
+      '200 Updated',
+      updateDocument
+    ).send()
+
+  } catch (error) {
+    return new InternalErrorResponse([
+      {
+        key: 'internal',
+        value: 'An Error Occurred While Fetching Updated Documents',
+      },
+    ]).send();
+  }
+}
+
+export const RemoveCoverImage = async (
+  req: NextRequest,
+) => {
+  const { userId } = getAuth(req);
+  const { searchParams } = new URL(req.url);
+
+  const id = searchParams.get('id');
+
+  try {
+    if (!userId) {
+      return new UnauthorizedResponse([
+        {
+          key: 'authentication',
+          value: 'Not Authentication',
+        },
+      ]).send();
+    }
+
+    if (!id) {
+      return new BadRequestResponse([
+        {
+          key: 'id',
+          value: 'DocumentId Is Required',
+        },
+      ]).send();
+    }
+
+    const existingDocument = await prisma.document.findUnique({
+      where: {
+        id
+      }
+    })    
+
+    if (!existingDocument) {
+      return new NotFoundResponse([
+        {
+          key: 'document',
+          value: 'Document Not Found'
+        }
+      ]).send()
+    }
+
+    if (existingDocument.userId !== userId) {
+      return new ForbiddenResponse([
+        {
+          key: 'forbidden',
+          value: 'Unauthorized',
+        },
+      ]).send();
+    }
+
+    const updateDocument = await prisma.document.update({
+      where: {
+        id
+      },
+      data: {
+        coverImage: null
+      }
+    })
+
+    return new SuccessResponseWithMsg(
+      '200 Updated',
+      updateDocument
+    ).send()
+
+  } catch (error) {
+    return new InternalErrorResponse([
+      {
+        key: 'internal',
+        value: 'An Error Occurred While Fetching Updated Documents',
+      },
+    ]).send();
+  }
+}

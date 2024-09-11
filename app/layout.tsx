@@ -1,10 +1,14 @@
+import { Toaster } from 'sonner';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
-import { Toaster } from 'sonner';
-import { ThemeProvider } from 'next-themes';
+
+import { ThemeProvider } from '@/Context/ThemeProvider';
+import { ModalProvider } from '@/Context/ModalProvider';
 import { NotionProvider } from '@/Context/NotionProvider';
 import ReactQueryProvider from '@/Context/ReactQueryProvider';
+import { EdgeStoreProvider } from '@/lib/edgestore';
+
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -32,18 +36,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning={true}>
       <body className={inter.className}>
         <NotionProvider>
-          <ReactQueryProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-              storageKey="notion-theme"
-            >
-              <Toaster position="bottom-center" />
-              {children}
-            </ThemeProvider>
-          </ReactQueryProvider>
+          <EdgeStoreProvider>
+            <ReactQueryProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+                storageKey="notion-theme"
+              >
+                <Toaster position="bottom-center" />
+                <ModalProvider />
+                {children}
+              </ThemeProvider>
+            </ReactQueryProvider>
+          </EdgeStoreProvider>
         </NotionProvider>
       </body>
     </html>
