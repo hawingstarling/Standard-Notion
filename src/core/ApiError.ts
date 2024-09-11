@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import {
   AuthFailureResponse,
   AccessTokenErrorResponse,
@@ -32,7 +31,7 @@ export abstract class ApiError extends Error {
     super(type);
   }
 
-  public static handle(err: ApiError): NextResponse {
+  public static handle(err: ApiError): Response {
     const error: ErrorApi = {
       key: err.type,
       value: err.message,

@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 
 // Helper code for the API consumer to understand the error and handle it accordingly
 
@@ -26,9 +25,9 @@ export abstract class ApiResponse {
   protected prepare<T extends ApiResponse>(
     response: T,
     headers: { [key: string]: string } = {},
-  ): NextResponse {
+  ): Response {
     const sanitizedResponse = ApiResponse.sanitize(response);
-    const res = NextResponse.json(sanitizedResponse, { status: this.status });
+    const res = Response.json(sanitizedResponse, { status: this.status });
 
     for (const [key, value] of Object.entries(headers)) {
       res.headers.set(key, value);
@@ -39,7 +38,7 @@ export abstract class ApiResponse {
 
   public send(
     headers: { [key: string]: string } = {}
-  ): NextResponse {
+  ): Response {
     return this.prepare<ApiResponse>(this, headers);
   }
 
@@ -68,7 +67,7 @@ export class NotFoundResponse extends ApiResponse {
     super(ResponseStatus.NOT_FOUND, errors);
   }
 
-  send(headers: { [key: string]: string } = {}): NextResponse {
+  send(headers: { [key: string]: string } = {}): Response {
     return super.prepare<NotFoundResponse>(this, headers);
   }
 }
@@ -114,7 +113,7 @@ export class SuccessResponse<T> extends ApiResponse {
     super(ResponseStatus.SUCCESS);
   }
 
-  send(headers: { [key: string]: string } = {}): NextResponse {
+  send(headers: { [key: string]: string } = {}): Response {
     return super.prepare<SuccessResponse<T>>(this, headers);
   }
 }
@@ -126,7 +125,7 @@ export class AccessTokenErrorResponse extends ApiResponse {
     super(ResponseStatus.UNAUTHORIZED, errors);
   }
 
-  send(headers: { [key: string]: string } = {}): NextResponse {
+  send(headers: { [key: string]: string } = {}): Response {
     headers['instruction'] = this.instruction;
     return super.prepare<AccessTokenErrorResponse>(this, headers);
   }
@@ -140,7 +139,7 @@ export class SuccessResponseWithMsg<T> extends ApiResponse {
     super(ResponseStatus.SUCCESS);
   }
 
-  send(headers: { [key: string]: string } = {}): NextResponse {
+  send(headers: { [key: string]: string } = {}): Response {
     return super.prepare<SuccessResponseWithMsg<T>>(this, headers);
   }
 }
@@ -153,7 +152,7 @@ export class CreatedResponse<T> extends ApiResponse {
     super(ResponseStatus.CREATED);
   }
 
-  send(headers: { [key: string]: string } = {}): NextResponse {
+  send(headers: { [key: string]: string } = {}): Response {
     return super.prepare<CreatedResponse<T>>(this, headers);
   }
 }

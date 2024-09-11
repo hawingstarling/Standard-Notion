@@ -20,12 +20,16 @@ export const ShowDocument = async (
 
   try {
     if (!userId) {
-      return new UnauthorizedResponse([
-        {
-          key: 'authentication',
-          value: 'Not Authentication',
-        },
-      ]);
+      // return new UnauthorizedResponse([
+      //   {
+      //     key: 'authentication',
+      //     value: 'Not Authentication',
+      //   },
+      // ]);
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
     if (!documentId) {
@@ -65,11 +69,15 @@ export const ShowDocument = async (
       document as unknown as ReadonlyArray<Document>,
     ).send();
   } catch (error) {
-    return new InternalErrorResponse([
-      {
-        key: 'internal',
-        value: 'An Error Occurred While Retrieving The Document',
-      },
-    ]);
+    // return new InternalErrorResponse([
+    //   {
+    //     key: 'internal',
+    //     value: 'An Error Occurred While Retrieving The Document',
+    //   },
+    // ]);
+    return new Response(
+      'Internal Server Error',
+      { status: 500 }
+    )
   }
 };

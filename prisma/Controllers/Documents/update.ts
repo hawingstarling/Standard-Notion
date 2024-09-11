@@ -25,12 +25,16 @@ export const Archive = async (
 
   try {
     if (!userId) {
-      return new UnauthorizedResponse([
-        {
-          key: 'authentication',
-          value: 'Not Authentication',
-        },
-      ]).send();
+      // return new UnauthorizedResponse([
+      //   {
+      //     key: 'authentication',
+      //     value: 'Not Authentication',
+      //   },
+      // ]).send();
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
     if (!id) {
@@ -99,12 +103,16 @@ export const Archive = async (
 
     return new SuccessResponseWithMsg('200 Updated', document).send();
   } catch (error) {
-    return new InternalErrorResponse([
-      {
-        key: 'internal',
-        value: 'An Error Occurred While Archiving The Document',
-      },
-    ]).send();
+    // return new InternalErrorResponse([
+    //   {
+    //     key: 'internal',
+    //     value: 'An Error Occurred While Archiving The Document',
+    //   },
+    // ]).send();
+    return new Response(
+      'Internal Server Error',
+      { status: 500 }
+    )
   }
 };
 
@@ -117,12 +125,16 @@ export const Restore = async (
   const id = searchParams.get('id');
   try {
     if (!userId) {
-      return new UnauthorizedResponse([
-        {
-          key: 'authentication',
-          value: 'Not Authentication',
-        },
-      ]).send();
+      // return new UnauthorizedResponse([
+      //   {
+      //     key: 'authentication',
+      //     value: 'Not Authentication',
+      //   },
+      // ]).send();
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
     if (!id) {
@@ -202,12 +214,16 @@ export const Restore = async (
 
     return new SuccessResponseWithMsg('200 Updated', document).send();
   } catch (error) {
-    return new InternalErrorResponse([
-      {
-        key: 'internal',
-        value: 'An Error Occurred While Restoring Archived Documents',
-      },
-    ]).send();
+    // return new InternalErrorResponse([
+    //   {
+    //     key: 'internal',
+    //     value: 'An Error Occurred While Restoring Archived Documents',
+    //   },
+    // ]).send();
+    return new Response(
+      'Internal Server Error',
+      { status: 500 }
+    )
   }
 };
 
@@ -235,12 +251,16 @@ export const UpdateDocument = async (
 
   try {
     if (!userId) {
-      return new UnauthorizedResponse([
-        {
-          key: 'authentication',
-          value: 'Not Authentication',
-        },
-      ]).send();
+      // return new UnauthorizedResponse([
+      //   {
+      //     key: 'authentication',
+      //     value: 'Not Authentication',
+      //   },
+      // ]).send();
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
     const existingDocument = await prisma.document.findUnique({
@@ -282,12 +302,16 @@ export const UpdateDocument = async (
     ).send()
 
   } catch (error) {
-    return new InternalErrorResponse([
-      {
-        key: 'internal',
-        value: 'An Error Occurred While Fetching Updated Documents',
-      },
-    ]).send();
+    // return new InternalErrorResponse([
+    //   {
+    //     key: 'internal',
+    //     value: 'An Error Occurred While Fetching Updated Documents',
+    //   },
+    // ]).send();
+    return new Response(
+      'Internal Server Error',
+      { status: 500 }
+    )
   }
 }
 
@@ -301,12 +325,16 @@ export const RemoveIcon = async (
 
   try {
     if (!userId) {
-      return new UnauthorizedResponse([
-        {
-          key: 'authentication',
-          value: 'Not Authentication',
-        },
-      ]).send();
+      // return new UnauthorizedResponse([
+      //   {
+      //     key: 'authentication',
+      //     value: 'Not Authentication',
+      //   },
+      // ]).send();
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
     if (!id) {
@@ -357,12 +385,16 @@ export const RemoveIcon = async (
     ).send()
 
   } catch (error) {
-    return new InternalErrorResponse([
-      {
-        key: 'internal',
-        value: 'An Error Occurred While Fetching Updated Documents',
-      },
-    ]).send();
+    // return new InternalErrorResponse([
+    //   {
+    //     key: 'internal',
+    //     value: 'An Error Occurred While Fetching Updated Documents',
+    //   },
+    // ]).send();
+    return new Response(
+      'Internal Server Error',
+      { status: 500 }
+    )
   }
 }
 
@@ -376,12 +408,16 @@ export const RemoveCoverImage = async (
 
   try {
     if (!userId) {
-      return new UnauthorizedResponse([
-        {
-          key: 'authentication',
-          value: 'Not Authentication',
-        },
-      ]).send();
+      // return new UnauthorizedResponse([
+      //   {
+      //     key: 'authentication',
+      //     value: 'Not Authentication',
+      //   },
+      // ]).send();
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
     if (!id) {
@@ -432,11 +468,15 @@ export const RemoveCoverImage = async (
     ).send()
 
   } catch (error) {
-    return new InternalErrorResponse([
-      {
-        key: 'internal',
-        value: 'An Error Occurred While Fetching Updated Documents',
-      },
-    ]).send();
+    // return new InternalErrorResponse([
+    //   {
+    //     key: 'internal',
+    //     value: 'An Error Occurred While Fetching Updated Documents',
+    //   },
+    // ]).send();
+    return new Response(
+      'Internal Server Error',
+      { status: 500 }
+    )
   }
 }

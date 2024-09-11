@@ -15,12 +15,16 @@ export const CreateDocument = async (
 
   try {
     if (!userId) {
-			return new UnauthorizedResponse([
-				{
-					key: 'authentication',
-					value: 'Not Authentication'
-				}
-			]).send();
+			// return new UnauthorizedResponse([
+			// 	{
+			// 		key: 'authentication',
+			// 		value: 'Not Authentication'
+			// 	}
+			// ]).send();
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
     const document: PrismaDocument = await prisma.document.create({

@@ -18,12 +18,16 @@ export const GetSidebar = async (_req: NextRequest) => {
 
   try {
     if (!userId) {
-      return new UnauthorizedResponse([
-        {
-          key: 'authentication',
-          value: 'Not Authentication',
-        },
-      ]).send();
+      // return new UnauthorizedResponse([
+      //   {
+      //     key: 'authentication',
+      //     value: 'Not Authentication',
+      //   },
+      // ]).send();
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
 
@@ -44,12 +48,16 @@ export const GetSidebar = async (_req: NextRequest) => {
     ).send();
 
   } catch (error) {
-    return new InternalErrorResponse([
-      {
-        key: 'internal',
-        value: 'An Error Occurred While Retrieving The Documents',
-      },
-    ]).send();
+    // return new InternalErrorResponse([
+    //   {
+    //     key: 'internal',
+    //     value: 'An Error Occurred While Retrieving The Documents',
+    //   },
+    // ]).send();
+    return new Response(
+      'Internal Server Error',
+      { status: 500 }
+    )
   }
 };
 
@@ -58,12 +66,16 @@ export const GetTrash = async (_req: NextRequest) => {
     const { userId } = getAuth(_req);
 
     if (!userId) {
-      return new UnauthorizedResponse([
-        {
-          key: 'authentication',
-          value: 'Not Authentication',
-        },
-      ]).send();
+      // return new UnauthorizedResponse([
+      //   {
+      //     key: 'authentication',
+      //     value: 'Not Authentication',
+      //   },
+      // ]).send();
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
     const documents = await prisma.document.findMany({
@@ -81,12 +93,16 @@ export const GetTrash = async (_req: NextRequest) => {
       documents as unknown as ReadonlyArray<Document>,
     ).send();
   } catch (error) {
-    return new InternalErrorResponse([
-      {
-        key: 'internal',
-        value: 'An Error Occurred While Fetching Archived Documents',
-      },
-    ]).send();
+    // return new InternalErrorResponse([
+    //   {
+    //     key: 'internal',
+    //     value: 'An Error Occurred While Fetching Archived Documents',
+    //   },
+    // ]).send();
+    return new Response(
+      'Internal Server Error',
+      { status: 500 }
+    )
   }
 };
 
@@ -95,12 +111,16 @@ export const GetSearch = async (_req: NextRequest) => {
     const { userId } = getAuth(_req);
 
     if (!userId) {
-      return new UnauthorizedResponse([
-        {
-          key: 'authentication',
-          value: 'Not Authentication',
-        },
-      ]).send();
+      // return new UnauthorizedResponse([
+      //   {
+      //     key: 'authentication',
+      //     value: 'Not Authentication',
+      //   },
+      // ]).send();
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
     const documents = await prisma.document.findMany({
@@ -118,12 +138,16 @@ export const GetSearch = async (_req: NextRequest) => {
       documents as unknown as ReadonlyArray<Document>,
     ).send();
   } catch (error) {
-    return new InternalErrorResponse([
-      {
-        key: 'internal',
-        value: 'An Error Occurred While Retrieving The Documents',
-      },
-    ]).send();
+    // return new InternalErrorResponse([
+    //   {
+    //     key: 'internal',
+    //     value: 'An Error Occurred While Retrieving The Documents',
+    //   },
+    // ]).send();
+    return new Response(
+      'Internal Server Error',
+      { status: 500 }
+    )
   }
 };
 
@@ -132,12 +156,16 @@ export const ListDocuments = async (_req: NextRequest) => {
     const { userId } = getAuth(_req);
 
     if (!userId) {
-      return new UnauthorizedResponse([
-        {
-          key: 'authentication',
-          value: 'Not Authentication',
-        },
-      ]).send();
+      // return new UnauthorizedResponse([
+      //   {
+      //     key: 'authentication',
+      //     value: 'Not Authentication',
+      //   },
+      // ]).send();
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
     const documents = await prisma.document.findMany({

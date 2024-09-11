@@ -20,12 +20,16 @@ export const Remove = async (
     }
 
     if (!userId) {
-      return new UnauthorizedResponse([
-        {
-          key: 'authentication',
-          value: 'Not Authentication',
-        },
-      ]).send();
+      // return new UnauthorizedResponse([
+      //   {
+      //     key: 'authentication',
+      //     value: 'Not Authentication',
+      //   },
+      // ]).send();
+      return new Response(
+        'Unauthorzied',
+        { status: 401 }
+      )
     }
 
     const existingDocument = await prisma.document.findUnique({
