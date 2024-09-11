@@ -3,7 +3,7 @@ import { Document } from '@prisma/client';
 import { SuccessResponseWithMsg } from '@/core/ApiResponse';
 import { DocumentModel, DocumentUpdateInput, ResponseModel } from '@/Model/apiModel';
 
-const BASE_DEV: string = 'http://localhost:3000/api/v1';
+const BASE_DEV: string = 'https://standard-notion.vercel.app/api/v1';
 
 export const CreateNewDocument = async function (
   document: DocumentModel,
